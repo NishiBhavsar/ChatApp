@@ -1,0 +1,3 @@
+29-06
+-Complete login and signup with backend.
+-backend of chat.
