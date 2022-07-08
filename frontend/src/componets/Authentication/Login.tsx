@@ -1,6 +1,6 @@
 import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack } from '@chakra-ui/react';
-import React, { useState } from 'react'
-import axios from "axios";
+import  { useState } from 'react'
+// import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 function Login() {
   const [show, setShow] = useState(false);
@@ -57,17 +57,7 @@ function Login() {
         onClick={submitHandler}
       >
         Login
-      </Button>
-      <Button
-        variant="solid"
-        colorScheme="red"
-        width="100%"
-        onClick={() => {
-            setEmail("guest@example.com");
-            setPassword("123456");
-        }}
-          >
-              Guest User
+        
       </Button>
     </VStack>
   );

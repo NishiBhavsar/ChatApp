@@ -1,36 +1,65 @@
-import { Alert, Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, Stack, VStack } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import {
+  Alert,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Stack,
+  VStack,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 
-import { signUp } from './services/userServices';
+// import { signUp } from './services/userServices';
 function Signup() {
-    const [show, setShow] = useState(false)
-    const [name, setName] = useState<any>();
-    const [email, setEmail] = useState < any>();
-    const [password, setPassword] = useState<any>();
-    const [confirmpassword, setConfirmpassword] = useState<any>();
-  const [pic, setPic] = useState<any>();
-  const [msg, setMsg] = useState<any>();
- const toast = useToast();
-    const handleClick = () => setShow(!show)
-
-    const postDetails = (pics: any) => { }
+  const [show, setShow] = useState(false);
+  // const [name, setName] = useState<any>();
+  // const [email, setEmail] = useState<any>();
+  // const [number, setNumber] = useState<any>();
+  // const [password, setPassword] = useState<any>();
+  // const [confirmpassword, setConfirmpassword] = useState<any>();
+  // const [pic, setPic] = useState<any>();
+  const [data, setData] = useState<any>({
+    name:"",
+    email: "",
+    number: "",
+    password: "",
+    confirmPassword: "",
+    pic:""
     
-  const submitHandler = async (val:any) => {
-      if (!name || !email || !password || !confirmpassword) {
-        toast({
-          title: "Please Fill all the Feilds",
-          status: "warning",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom",
-        });
-        
-        return;
+  })
+  const [msg, setMsg] = useState<any>();
+  const toast = useToast();
+  const handleChange = ({ currentTarget: Input }:any) => {
+    setData({ ...data, [Input.name]: Input.value });
+  };
+  const handleClick = () => setShow(!show);
+
+  const postDetails = (pics: any) => {};
+// const [error, setError] = useState("");
+  const submitHandler = async (e: any) => {
+    if (
+      !data.name ||
+      !data.email ||
+      !data.number ||
+      !data.password ||
+      !data.confirmPassword
+    ) {
+      toast({
+        title: "Please Fill all the Feilds",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      return;
     }
-    console.log(name, email, password, pic);
-    if (password !== confirmpassword) {
+    console.log(data.name, data.email, data.number, data.password, data.pic);
+    if (data.password !== data.confirmPassword) {
       toast({
         title: "Passwords Do Not Match",
         status: "warning",
@@ -40,40 +69,65 @@ function Signup() {
       });
       return;
     }
-    // const { data } = await axios.post("/user/signup", {
-    //   name,
-    //   email,
-    //   password,
-    //   pic,
-    // });
-    // console.log(data);
-    signUp(val).then((res: any) => {
-      setMsg(res?.response?.data?.error);
-      console.log("Nice work");
-      if (res.status == 200) {
-        console.log("Work's good");
-        
-      }
-      // else {
-      //   console.log("error there");
-        
-      // }
-    });
+    const { name, email,number, password,pic } = data;
+    if (name && email && number && password && pic) {
+      axios
+        .post("http://localhost:8080/api/user", data)
+        .then((res) => console.log(res));
+    } else {
+      alert("invalid input");
     }
+    //  try {
+    //    const url = "http://localhost:8080/api/user";
+    //    const { data: res } = await axios.post(url, data);
+    //    toast({
+    //      title: "Account created.",
+    //      description: "User registered successfully",
+    //      status: "success",
+    //      duration: 5000,
+    //      isClosable: true,
+    //      position: "bottom",
+    //    });
+    //   //  navigate("/login");
+    //    console.log(res.message);
+    //  } catch (error) {
+    //    if (
+    //      error
+    //    ) {
+    //     //  setError(error.response.data.message);
+    //      console.log(error);
+
+    //    }
+    //  }
+  };;
   return (
     <VStack spacing="5px">
       <FormControl id="first-name" isRequired>
         <FormLabel>Name</FormLabel>
         <Input
           placeholder="Enter Your Name"
-          onChange={(e) => setName(e.target.value)}
+          name="name"
+          onChange={handleChange}
+          value={data.name}
         />
       </FormControl>
       <FormControl id="email" isRequired>
         <FormLabel>Email</FormLabel>
         <Input
           placeholder="Enter Your Email"
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          onChange={handleChange}
+          value={data.email}
+        />
+      </FormControl>
+
+      <FormControl id="number" isRequired>
+        <FormLabel>MobileNo</FormLabel>
+        <Input
+          placeholder="Enter mobile number"
+          name="number"
+          onChange={handleChange}
+          value={data.number}
         />
       </FormControl>
       <FormControl id="password" isRequired>
@@ -82,7 +136,9 @@ function Signup() {
           <Input
             type={show ? "text" : "password"}
             placeholder="Enter Your Password"
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            onChange={handleChange}
+            value={data.password}
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -97,7 +153,9 @@ function Signup() {
           <Input
             type={show ? "text" : "password"}
             placeholder="Enter Confirm Password"
-            onChange={(e) => setConfirmpassword(e.target.value)}
+            name="confirmPassword"
+            onChange={handleChange}
+            value={data.confirmPassword}
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -113,7 +171,9 @@ function Signup() {
           type="file"
           p={1.5}
           accept="image/*"
-          onChange={(e) => postDetails(e.target.files[0])}
+          name="pic"
+          onChange={handleChange}
+          value={data.pic}
         />
       </FormControl>
 
@@ -127,7 +187,7 @@ function Signup() {
       </Button>
       {msg && (
         <Stack sx={{ width: "100%" }} spacing={2}>
-          <Alert >{msg}</Alert>
+          <Alert>{msg}</Alert>
         </Stack>
       )}
     </VStack>

@@ -3,7 +3,8 @@
 .App{
   min-height: 100vh;
   display: flex;
-  background-image: url("./chatBackground.jpg");
+  /* background-color: #417D7A; */
+  background-image: url("Capture.JPG");
 background-size: cover ;
 background-position:center ;
 }

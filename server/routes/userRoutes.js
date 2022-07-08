@@ -1,57 +1,31 @@
-import mongoose from "mongoose";
-import { Router } from "express";
-import User from "../models/userModels.js";
-import jwt from "jsonwebtoken";
+// const router = require("express").Router();
+// const { User, validate } = require("../models/userModel");
+// const bcrypt = require("bcrypt");
 
-const userRouter = Router();
+// router.post("/", async (req, res) => {
+//   console.log("Hope its here!! ");
+//   try {
+//     // console.log(req.body);
+//     console.log("Heyyy");
+//     const { error } = validate(req.body);
+//     if (error) {
+//       console.log("your log is here!!!!!!!!!!!!!!!!");
+//       return res.status(400).send({ message: error.details[0].message });
+//     }
 
-userRouter.post("/signup", async (req, res) => {
-  //   res.json(req.body);
-  try {
-    console.log(req.body);
-    const findUser = await User.findOne({
-      email: req.body.email,
-    });
-    if (!findUser) {
-      const user = await User.create(req.body);
-      return res.status(201).json(user);
-    }
-    return res.status(400).json({
-      error: "This Email is Already exist Signup with different email id ",
-    });
-  } catch (err) {
-    return err;
-  }
-});
+//     const user = await User.findOne({ email: req.body.email });
+//     if (user) return res.status(409).send({ message: "User already exist" });
 
-userRouter.post("/signin", async (req, res) => {
-  const test = true;
-  try {
-    // console.log(req.body);
-    const user = await User.findOne({
-      email: req.body.email,
-    });
+//     console.log("such an dumbass :(");
 
-    if (!user) {
-      return res.status(400).json({
-        error: "This Mail does Not exist please Register First",
-      });
-    }
-    if (user.password === req.body.password && user.email === req.body.email) {
-      const token = jwt.sign(JSON.stringify(user), process.env.SECRATEKEY);
-      return res.status(200).json({ user, token });
-    } else {
-      return res.status(400).json({
-        error: "Please enter valid password",
-      });
-    }
-    // return res.status(400).json({
-    //   error: "Please enter valid email id and password ",
-    // });
-  } catch (err) {
-    console.log("error", err);
-    return err;
-  }
-});
-// export default userRouter;
-export default userRouter;
+//     console.log("You are good to go :) ");
+//     const salt = await bcrypt.genSalt(Number(process.env.SALT));
+//     const hashPassword = await bcrypt.hash(req.body.password, salt);
+
+//     await new User({ ...res.body, password: hashPassword }).save();
+//     res.status(201).send({ message: "User created successfully" });
+//   } catch (error) {
+//     res.status(500).send({ message: "Internal server error" });
+//   }
+// });
+// module.exports = router;
