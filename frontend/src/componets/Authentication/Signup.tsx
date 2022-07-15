@@ -72,7 +72,7 @@ function Signup() {
     const { name, email,number, password,pic } = data;
     if (name && email && number && password && pic) {
       axios
-        .post("http://localhost:8080/api/user", data)
+        .post("http://localhost:5000/", data)
         .then((res) => console.log(res));
     } else {
       alert("invalid input");

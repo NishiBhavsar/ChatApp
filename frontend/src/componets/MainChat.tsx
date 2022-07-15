@@ -14,8 +14,8 @@ function MainChat() {
       </Box>
       <hr></hr>
       <Box display="flex" flexDirection="column" >
-        <Box  bg="blue" height={"36.875rem"} > Messages </Box>
-        <Box bg="green" height={"2.438rem"} > SendBtn </Box>
+        <Box  bg="lightblue" height={"36.875rem"} > Messages </Box>
+        <Box bg="lightgreen" height={"2.438rem"} > SendBtn </Box>
       </Box>
     </Box>
   );
