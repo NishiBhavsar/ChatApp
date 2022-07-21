@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const http = axios.create({
-  baseURL: "http://localhost:8000",
+const API = process.env.reactAPI;
+export const http = axios.create({
+  baseURL: `${API}`,
 });
 http.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
@@ -11,4 +12,4 @@ http.interceptors.request.use((req) => {
   return req;
 });
 
-export default http;
+//  default http;
