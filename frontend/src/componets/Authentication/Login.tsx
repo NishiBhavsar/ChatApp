@@ -1,16 +1,31 @@
-import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack } from '@chakra-ui/react';
-import  { useState } from 'react'
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
+  VStack,
+  useToast,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { Redirect } from "react-router-dom";
+import { login } from "../../services/userService";
 // import axios from "axios";
-import { useToast } from "@chakra-ui/react";
+
+// var err = new Error('Not Found');
+// err.status = 404;
 function Login() {
+  // interface success {
+  //   status?: number;
+  // }
+  // const done = new success('User are there');
   const [show, setShow] = useState(false);
-  const [email, setEmail] = useState<any>();
-  const [password, setPassword] = useState<any>();
-  
+  const [email, setEmail] = useState<any>("");
+  const [password, setPassword] = useState<any>("");
 
   const handleClick = () => setShow(!show);
- const toast = useToast();
-  
+  const toast = useToast();
 
   const submitHandler = () => {
     if (!email || !password) {
@@ -21,9 +36,21 @@ function Login() {
         isClosable: true,
         position: "bottom",
       });
-      
+
       return;
     }
+    login({ email, password }).then((res: any) => {
+      try {
+        if (res.status === 200) {
+          console.log("Login successfully");
+          <Redirect to="/chats" />;
+        } else {
+          console.log("error");
+        }
+      } catch (err) {
+        return err;
+      }
+    });
   };
   return (
     <VStack spacing="5px">
@@ -31,7 +58,7 @@ function Login() {
         <FormLabel>Email</FormLabel>
         <Input
           placeholder="Enter Your Email"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: any) => setEmail(e.target.value)}
         />
       </FormControl>
       <FormControl id="password" isRequired>
@@ -40,10 +67,16 @@ function Login() {
           <Input
             type={show ? "text" : "password"}
             placeholder="Enter Your Password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e: any) => setPassword(e.target.value)}
           />
           <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
+            <Button
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+              variant="outline"
+              colorScheme="#111c24"
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
@@ -51,16 +84,18 @@ function Login() {
       </FormControl>
 
       <Button
-        colorScheme="facebook"
+        // colorScheme="facebook"
+        variant="outline"
+        // backgroundColor="#00a884"
+        colorScheme="#111c24"
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}
       >
         Login
-        
       </Button>
     </VStack>
   );
 }
 
-export default Login
+export default Login;

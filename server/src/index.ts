@@ -5,7 +5,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import routes from "./routes/index";
+import { route } from "./routes/index";
 
 require("dotenv/config");
 //Database
@@ -20,7 +20,8 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 
 //Routes
-app.use("/api", routes.authRouter);
+app.use("/api", route.authRouter);
+app.use("/api", route.chatRouter);
 
 //server listening
 

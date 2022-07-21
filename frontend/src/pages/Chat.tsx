@@ -1,19 +1,18 @@
-import { Box } from '@chakra-ui/react';
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import MainChat from '../componets/MainChat';
-import SideBar from '../componets/SideBar';
+import { Box } from "@chakra-ui/react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import MainChat from "../componets/MainChat";
+import SideBar from "../componets/SideBar";
 
 function Chat() {
   const [chats, setChats] = useState<any[]>([]);
   const fetchChats = async () => {
-    const { data } = await axios.get('/api/chat');
+    const { data } = await axios.get("/api/chat");
     setChats(data);
-    
   };
   useEffect(() => {
     fetchChats();
-  }, [])
+  }, []);
   return (
     // <div>
     //   {chats.map((chat) => (
@@ -22,8 +21,10 @@ function Chat() {
 
     // </div>
     <Box
+      // margin-bottom="0px"
+      // height="100%"
       // m="10px 0 15px 0"
-      bg={"black"}
+      // bg={"black"}
       w="100%"
       // height="50px"
       color="black"
@@ -32,8 +33,9 @@ function Chat() {
         display="flex"
         flexDirection="row"
         justifyContent="space-between"
-        bg={"#F2F2F2"}
-        m="10px 8px 10px 8px"
+        bg={"#00a884"}
+        color={"#fafafa"}
+        // m="10px 8px 10px 8px"
         h="3.5rem"
       >
         <Box marginLeft="8px">Chat-App</Box>
@@ -43,9 +45,9 @@ function Chat() {
         display="flex"
         flexDirection="row"
         justifyContent="space-between"
-        height="89%"
-        m="10px 8px 10px 8px"
-        backgroundColor="black"
+        height="92.5%"
+        // m="10px 8px 10px 8px"
+        // backgroundColor="black"
       >
         <SideBar />
         <MainChat />

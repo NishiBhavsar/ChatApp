@@ -1,10 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
 
-.App{
+.App {
   min-height: 100vh;
   display: flex;
+  /* height: auto; */
   /* background-color: #417D7A; */
-  background-image: url("Capture.JPG");
-background-size: cover ;
-background-position:center ;
+  /* background-image: url("Capture.JPG"); */
+  background-color: #111c24;
+  background-size: cover;
+  background-position: center;
+}
+/* * {
+  height: 100%;
+} */
+.vertical-line {
+  /* width: 0px; */
+  /* Use only border style */
+  height: 100%;
+  float: right;
+  border-left: solid;
+  /* border-width: thin; */
+  color: "#dee1e3";
 }

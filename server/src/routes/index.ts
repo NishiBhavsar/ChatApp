@@ -1,8 +1,9 @@
-import authRouter from './authRouter'
+import authRouter from "./authRouter";
+import chatRouter from "./authRouter";
+export const route = {
+  authRouter,
+  chatRouter,
+};
+// export const route = {
 
-const routes = {
-    authRouter
-}
-
-export default routes;
-
+// };

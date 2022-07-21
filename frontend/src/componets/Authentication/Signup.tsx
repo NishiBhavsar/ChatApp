@@ -8,10 +8,11 @@ import {
   InputRightElement,
   Stack,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useToast } from "@chakra-ui/react";
-import axios from "axios";
+// import axios from "axios";
+import { signUp } from "../../services/userService";
 
 // import { signUp } from './services/userServices';
 function Signup() {
@@ -23,23 +24,22 @@ function Signup() {
   // const [confirmpassword, setConfirmpassword] = useState<any>();
   // const [pic, setPic] = useState<any>();
   const [data, setData] = useState<any>({
-    name:"",
+    name: "",
     email: "",
     number: "",
     password: "",
     confirmPassword: "",
-    pic:""
-    
-  })
+    pic: "",
+  });
   const [msg, setMsg] = useState<any>();
   const toast = useToast();
-  const handleChange = ({ currentTarget: Input }:any) => {
+  const handleChange = ({ currentTarget: Input }: any) => {
     setData({ ...data, [Input.name]: Input.value });
   };
   const handleClick = () => setShow(!show);
 
   const postDetails = (pics: any) => {};
-// const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const submitHandler = async (e: any) => {
     if (
       !data.name ||
@@ -58,7 +58,6 @@ function Signup() {
 
       return;
     }
-    console.log(data.name, data.email, data.number, data.password, data.pic);
     if (data.password !== data.confirmPassword) {
       toast({
         title: "Passwords Do Not Match",
@@ -69,14 +68,19 @@ function Signup() {
       });
       return;
     }
-    const { name, email,number, password,pic } = data;
-    if (name && email && number && password && pic) {
-      axios
-        .post("http://localhost:5000/", data)
-        .then((res) => console.log(res));
-    } else {
-      alert("invalid input");
+    console.log(data.name, data.email, data.number, data.password, data.pic);
+    const response: any = signUp(data);
+    if (response.status === 200) {
+      // navigate("/");
     }
+    // const { name, email,number, password,pic } = data;
+    // if (name && email && number && password && pic) {
+    //   axios
+    //     .post("http://localhost:5000/", data)
+    //     .then((res) => console.log(res));
+    // } else {
+    //   alert("invalid input");
+    // }
     //  try {
     //    const url = "http://localhost:8080/api/user";
     //    const { data: res } = await axios.post(url, data);
@@ -99,7 +103,8 @@ function Signup() {
 
     //    }
     //  }
-  };;
+  };
+
   return (
     <VStack spacing="5px">
       <FormControl id="first-name" isRequired>
@@ -141,7 +146,14 @@ function Signup() {
             value={data.password}
           />
           <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
+            <Button
+              variant="outline"
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+              // color="#dee1e3"
+              colorScheme="#111c24"
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
@@ -158,7 +170,13 @@ function Signup() {
             value={data.confirmPassword}
           />
           <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
+            <Button
+              variant="outline"
+              colorScheme="#111c24"
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
@@ -178,7 +196,10 @@ function Signup() {
       </FormControl>
 
       <Button
-        colorScheme="facebook"
+        variant="outline"
+        // backgroundColor="#00a884"
+        colorScheme="#111c24"
+        // backgroundColor="#00a884"
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}

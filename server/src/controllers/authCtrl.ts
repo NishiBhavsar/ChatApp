@@ -72,6 +72,12 @@ export const login = async (req: Request, res: Response) => {
       .json({ error: "username or password is must be required" });
   }
 
+  // export const allUsers = async (req:Request, res:Response) => {
+  //   const keyword = req.query
+  //   console.log(keyword);
+
+  // }
+
   // console.log("HEyy");
   // const match = await bcrypt.compare(req.body.password, user.password);
 
@@ -92,3 +98,17 @@ export const login = async (req: Request, res: Response) => {
   //   }
 };
 // export default authCtrl;
+export const allUsers = async (req: Request, res: Response) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          // i for upper and lowercase
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+  // console.log(keyword);
+  const users = await Users.find(keyword);
+  res.send(users);
+};
