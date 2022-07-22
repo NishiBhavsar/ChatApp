@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Users from "../models/userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { generateActiveToken } from "../config/generateToken";
+import { generateToken } from "../config/generateToken";
 import "dotenv/config";
 
 export const authCtrl = {
@@ -14,26 +14,26 @@ export const authCtrl = {
       if (user) {
         return res.status(400).json({ msg: "Email already exist" });
       }
-      //   const pass = password.toString();
-      //   const passwordHash = await bcrypt.hash(pass, 10);
+      const pass = password.toString();
+      const passwordHash = await bcrypt.hash(pass, 10);
 
       const newUser = {
         name,
         number,
         email,
-        password,
-        //   : passwordHash,
+        password: passwordHash,
         avatar,
       };
 
-      //   const active_token = generateActiveToken({ newUser });
+      const active_token = generateToken(newUser);
+      // generateActiveToken({ newUser });
       const userData = await Users.create(newUser);
 
       res.json({
         status: "OK",
         msg: "Register successfully",
         data: newUser,
-        // active_token,
+        active_token,
         userData,
       });
     } catch (error) {
@@ -46,57 +46,31 @@ export const authCtrl = {
     }
   },
 };
-export const login = async (req: Request, res: Response) => {
-  //   console.log(Users.email);
-  try {
-    const user = await Users.findOne({
-      email: req.body.email,
-    });
-    // console.log(user.email);
-    // console.log(user.password);
-
-    if (!user) {
-      return res.status(401).json({ error: "user not found" });
-    }
-    const secret = process.env.JWT_SECRET || "";
-    if (user.password == req.body.password) {
-      const token = jwt.sign(JSON.stringify(user), secret);
-      console.log("Login successfully");
-      return res.status(200).json({ token, user });
-    } else {
-      return res.status(400).json({ error: "password is incorrect" });
-    }
-  } catch (err) {
-    return res
-      .status(400)
-      .json({ error: "username or password is must be required" });
+export const login = async (req: any, res: Response) => {
+  // const active_token = generateActiveToken({ newUser });
+  //     const userData = await Users.create(newUser);
+  const user = await Users.findOne({
+    email: req.body.email,
+  });
+  if (!user) {
+    return res.status(401).json({ error: "user not found" });
   }
-
-  // export const allUsers = async (req:Request, res:Response) => {
-  //   const keyword = req.query
-  //   console.log(keyword);
-
-  // }
-
-  // console.log("HEyy");
-  // const match = await bcrypt.compare(req.body.password, user.password);
-
-  // const secret = process.env.JWT_SECRET || "";
-
-  // const accessToken = jwt.sign(JSON.stringify(user), secret);
-  // console.log("I'm there");
-
-  // if (match) {
-  //   return res.status(200).json({ accessToken, user });
-  // } else {
-  //   return res.status(400).json({ error: "password is incorrect" });
-  // }
-  //   } catch (err) {
-  //     return res
-  //       .status(400)
-  //       .json({ error: "username or password is must be required" });
-  //   }
+  bcrypt.compare(req.body.password, user.password, (err, data) => {
+    if (data) {
+      return res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        avatar: user.avatar,
+        active_token: generateToken(user._id),
+      });
+    } else {
+      return res.status(401).json({ msg: "invalid auth" });
+    }
+  });
 };
+
 // export default authCtrl;
 export const allUsers = async (req: Request, res: Response) => {
   const keyword = req.query.search
@@ -104,11 +78,11 @@ export const allUsers = async (req: Request, res: Response) => {
         $or: [
           // i for upper and lowercase
           { name: { $regex: req.query.search, $options: "i" } },
-          { email: { $regex: req.query.search, $options: "i" } },
+          // { email: { $regex: req.query.search, $options: "i" } },
         ],
       }
     : {};
   // console.log(keyword);
-  const users = await Users.find(keyword);
+  const users = await Users.find(keyword).find({ _id: { $ne: req.body._id } });
   res.send(users);
 };

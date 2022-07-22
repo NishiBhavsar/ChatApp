@@ -10,12 +10,14 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 import React, { useState } from "react";
 // import axios from "axios";
 import { signUp } from "../../services/userService";
 
 // import { signUp } from './services/userServices';
 function Signup() {
+  const history = useHistory();
   const [show, setShow] = useState(false);
   // const [name, setName] = useState<any>();
   // const [email, setEmail] = useState<any>();
@@ -29,7 +31,7 @@ function Signup() {
     number: "",
     password: "",
     confirmPassword: "",
-    pic: "",
+    avatar: "",
   });
   const [msg, setMsg] = useState<any>();
   const toast = useToast();
@@ -68,10 +70,30 @@ function Signup() {
       });
       return;
     }
-    console.log(data.name, data.email, data.number, data.password, data.pic);
+    console.log(data.name, data.email, data.number, data.password, data.avatar);
     const response: any = signUp(data);
     if (response.status === 200) {
-      // navigate("/");
+      console.log("opps");
+    } else {
+      toast({
+        title: "Registration Successful",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      // setPicLoading(false);
+      history.push("/chats");
+
+      // toast({
+      //   title: "Error Occured!",
+      //   description: "error",
+      //   status: "error",
+      //   duration: 5000,
+      //   isClosable: true,
+      //   position: "bottom",
+      // });
     }
     // const { name, email,number, password,pic } = data;
     // if (name && email && number && password && pic) {
