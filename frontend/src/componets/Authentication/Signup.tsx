@@ -10,46 +10,36 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 // import axios from "axios";
 import { signUp } from "../../services/userService";
+import axios from "axios";
 
 // import { signUp } from './services/userServices';
-function Signup() {
-  const history = useHistory();
-  const [show, setShow] = useState(false);
-  // const [name, setName] = useState<any>();
-  // const [email, setEmail] = useState<any>();
-  // const [number, setNumber] = useState<any>();
-  // const [password, setPassword] = useState<any>();
-  // const [confirmpassword, setConfirmpassword] = useState<any>();
-  // const [pic, setPic] = useState<any>();
-  const [data, setData] = useState<any>({
-    name: "",
-    email: "",
-    number: "",
-    password: "",
-    confirmPassword: "",
-    avatar: "",
-  });
-  const [msg, setMsg] = useState<any>();
-  const toast = useToast();
-  const handleChange = ({ currentTarget: Input }: any) => {
-    setData({ ...data, [Input.name]: Input.value });
+const Signup = () => {
+  const handleFile = (e: { target: { result: any } }) => {
+    const content = e.target.result;
+    console.log("file content", content);
+    // You can set content in state and show it in render.
   };
+  const navigate = useNavigate();
+  const [show, setShow] = useState(false);
+
+  const [name, setName] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const [number, setNumber] = useState<string>();
+  const [confirmPassword, setConfirmPassword] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [msg, setMsg] = useState<any>();
+
+  const toast = useToast();
+
   const handleClick = () => setShow(!show);
 
-  const postDetails = (pics: any) => {};
-  // const [error, setError] = useState("");
-  const submitHandler = async (e: any) => {
-    if (
-      !data.name ||
-      !data.email ||
-      !data.number ||
-      !data.password ||
-      !data.confirmPassword
-    ) {
+  const submitHandler = async () => {
+    if (!name || !email || !number || !password || !confirmPassword) {
       toast({
         title: "Please Fill all the Feilds",
         status: "warning",
@@ -60,7 +50,7 @@ function Signup() {
 
       return;
     }
-    if (data.password !== data.confirmPassword) {
+    if (password !== confirmPassword) {
       toast({
         title: "Passwords Do Not Match",
         status: "warning",
@@ -70,11 +60,26 @@ function Signup() {
       });
       return;
     }
-    console.log(data.name, data.email, data.number, data.password, data.avatar);
-    const response: any = signUp(data);
-    if (response.status === 200) {
-      console.log("opps");
-    } else {
+    console.log(name, email, number, password, avatar);
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/api/",
+        {
+          name,
+          email,
+          number,
+          password,
+          avatar,
+        },
+        config
+      );
+      console.log(data);
+      // console.log(data);
       toast({
         title: "Registration Successful",
         status: "success",
@@ -83,48 +88,60 @@ function Signup() {
         position: "bottom",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
-      // setPicLoading(false);
-      history.push("/chats");
 
-      // toast({
-      //   title: "Error Occured!",
-      //   description: "error",
-      //   status: "error",
-      //   duration: 5000,
-      //   isClosable: true,
-      //   position: "bottom",
-      // });
+      navigate("/chats");
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
     }
-    // const { name, email,number, password,pic } = data;
-    // if (name && email && number && password && pic) {
-    //   axios
-    //     .post("http://localhost:5000/", data)
-    //     .then((res) => console.log(res));
-    // } else {
-    //   alert("invalid input");
-    // }
-    //  try {
-    //    const url = "http://localhost:8080/api/user";
-    //    const { data: res } = await axios.post(url, data);
-    //    toast({
-    //      title: "Account created.",
-    //      description: "User registered successfully",
-    //      status: "success",
-    //      duration: 5000,
-    //      isClosable: true,
-    //      position: "bottom",
-    //    });
-    //   //  navigate("/login");
-    //    console.log(res.message);
-    //  } catch (error) {
-    //    if (
-    //      error
-    //    ) {
-    //     //  setError(error.response.data.message);
-    //      console.log(error);
+  };
+  const postDetails = (avatar: any) => {
+    if (avatar === undefined) {
+      toast({
+        title: "Please Select an Image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    console.log(avatar);
+    if (avatar.type === "image/jpeg" || avatar.type === "image/png") {
+      const data = new FormData();
+      data.append("file", avatar);
+      data.append("upload_preset", "rb5plfom");
+      data.append("cloud_name", "dlkmusslx");
+      fetch("https://api.cloudinary.com/v1_1/dlkmusslx/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setAvatar(data.secure_url.toString());
 
-    //    }
-    //  }
+          // setAvatar(data.url.toString());
+          // console.log(data.url.toString());
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      toast({
+        title: "Please Select an Image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      return;
+    }
   };
 
   return (
@@ -134,8 +151,10 @@ function Signup() {
         <Input
           placeholder="Enter Your Name"
           name="name"
-          onChange={handleChange}
-          value={data.name}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setName(e.target.value)
+          }
+          // value={name}
         />
       </FormControl>
       <FormControl id="email" isRequired>
@@ -143,8 +162,10 @@ function Signup() {
         <Input
           placeholder="Enter Your Email"
           name="email"
-          onChange={handleChange}
-          value={data.email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
+          // value={email}
         />
       </FormControl>
 
@@ -153,8 +174,10 @@ function Signup() {
         <Input
           placeholder="Enter mobile number"
           name="number"
-          onChange={handleChange}
-          value={data.number}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setNumber(e.target.value)
+          }
+          // value={number}
         />
       </FormControl>
       <FormControl id="password" isRequired>
@@ -164,8 +187,10 @@ function Signup() {
             type={show ? "text" : "password"}
             placeholder="Enter Your Password"
             name="password"
-            onChange={handleChange}
-            value={data.password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+            // value={password}
           />
           <InputRightElement width="4.5rem">
             <Button
@@ -188,8 +213,10 @@ function Signup() {
             type={show ? "text" : "password"}
             placeholder="Enter Confirm Password"
             name="confirmPassword"
-            onChange={handleChange}
-            value={data.confirmPassword}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setConfirmPassword(e.target.value)
+            }
+            // value={confirmPassword}
           />
           <InputRightElement width="4.5rem">
             <Button
@@ -205,15 +232,18 @@ function Signup() {
         </InputGroup>
       </FormControl>
 
-      <FormControl id="pic">
+      <FormControl id="avatar">
         <FormLabel>Upload your Picture</FormLabel>
         <Input
           type="file"
           p={1.5}
           accept="image/*"
-          name="pic"
-          onChange={handleChange}
-          value={data.pic}
+          name="avatar"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            postDetails(e.target.files[0]);
+          }}
+
+          // value={avatar}
         />
       </FormControl>
 
@@ -228,12 +258,35 @@ function Signup() {
       >
         Sign Up
       </Button>
-      {msg && (
-        <Stack sx={{ width: "100%" }} spacing={2}>
-          <Alert>{msg}</Alert>
-        </Stack>
-      )}
+      {/* {msg && (
+          <Stack sx={{ width: "100%" }} spacing={2}>
+            <Alert>{msg}</Alert>
+          </Stack>
+        )} */}
     </VStack>
   );
-}
+};
+
 export default Signup;
+//   function handleChangeFile (e:any):any => {
+//  var file = e.target.files[0];
+//   var reader = new FileReader();
+//   reader.onload = function(event) {
+//     // The file's text will be printed here
+//     // SET STATE HERE FOR URL!!!!
+
+//   };
+
+//   reader.readAsDataURL(file);
+// };
+
+//imp in file input
+// handleChangeFile(e.target.files[0])
+// const file = e.target.files[0];
+// var reader = new FileReader();
+// reader.onload = function (e) {
+//   // The file's text will be printed here
+//   // SET STATE HERE FOR URL!!!!
+//   setAvatar(file);
+// };
+// reader.readAsDataURL(file);

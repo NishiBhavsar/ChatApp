@@ -10,14 +10,14 @@ import {
 } from "@chakra-ui/react";
 import "../App.css";
 // import M from "materialize-css";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 
 function SideBar() {
   const searchModal = useRef(null);
   const [search, setSearch] = useState("");
   const [userDetails, setUserDetails] = useState([]);
-  const history = useHistory();
+  const navigate = useNavigate();
   // useEffect(() => {
   //   Modal.modal.init(searchModal.current);
   // }, []);
@@ -65,27 +65,7 @@ function SideBar() {
               value={search}
               onChange={(e) => fetchUsers(e.target.value)}
             />
-            {/* <Input placeholder="Unstyled" /> */}
-            {/* <ul className="collection">
-              {userDetails.map((item) => {
-                return (
-                  <Link
-                    to={
-                      item._id !== state._id
-                        ? "/profile/" + item._id
-                        : "/profile"
-                    }
-                    
-                    onClick={() => {
-                      M.Modal.getInstance(searchModal.current).close();
-                      setSearch("");
-                    }}
-                  >
-                    <li className="collection-item">{item.email}</li>
-                  </Link>
-                );
-              })}
-            </ul> */}
+
             <ul></ul>
           </TabPanel>
         </TabPanels>

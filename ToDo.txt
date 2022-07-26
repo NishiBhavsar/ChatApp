@@ -1,3 +1,15 @@
 22-7
 
 Complete frontend of the chat-app 
+
+
+
+//
+
+avatar using cloudinary api
+seen by user
+typing
+timeing in msg
+notification
+online
+

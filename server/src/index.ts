@@ -6,6 +6,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { route } from "./routes/index";
+import socket from "socket.io";
+// import {notFound} from "./middleware/errorMiddleware";
 
 require("dotenv/config");
 //Database

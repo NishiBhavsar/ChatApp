@@ -3,23 +3,18 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import MainChat from "../componets/MainChat";
 import SideBar from "../componets/SideBar";
+import MenuBar from "../componets/MenuBar";
+// import { ChatState } from "../context/provider";
 
+interface IMyProps {
+  fetchAgain: boolean;
+}
+// : React.FC<IMyProps> = ({ props: IMyProps }) =>
 function Chat() {
-  const [chats, setChats] = useState<any[]>([]);
-  const fetchChats = async () => {
-    const { data } = await axios.get("/api/chat");
-    setChats(data);
-  };
-  useEffect(() => {
-    fetchChats();
-  }, []);
-  return (
-    // <div>
-    //   {chats.map((chat) => (
-    //     <div key={chat._id}>{chat.chatName}</div>
-    //   ))}
+  const [fetchAgain, setFetchAgain] = useState<IMyProps>({ fetchAgain: false });
+  // const { user } = ChatState();
 
-    // </div>
+  return (
     <Box
       // margin-bottom="0px"
       // height="100%"
@@ -29,18 +24,7 @@ function Chat() {
       // height="50px"
       color="black"
     >
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="space-between"
-        bg={"#00a884"}
-        color={"#fafafa"}
-        // m="10px 8px 10px 8px"
-        h="3.5rem"
-      >
-        <Box marginLeft="8px">Chat-App</Box>
-        <Box marginRight="8px">Avatar</Box>
-      </Box>
+      <MenuBar />
       <Box
         display="flex"
         flexDirection="row"
@@ -50,6 +34,7 @@ function Chat() {
         // backgroundColor="black"
       >
         <SideBar />
+        {/* fetchAgain={fetchAgain} */}
         <MainChat />
       </Box>
     </Box>

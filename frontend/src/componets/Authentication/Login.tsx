@@ -8,18 +8,15 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Redirect } from "react-router-dom";
 import { login } from "../../services/userService";
-// import axios from "axios";
+import { http } from "../../config/http";
+import axios from "axios";
 
-// var err = new Error('Not Found');
-// err.status = 404;
-function Login() {
-  // interface success {
-  //   status?: number;
-  // }
-  // const done = new success('User are there');
+const Login = () => {
+  const API = process.env.REACT_APP_API;
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState<any>("");
   const [password, setPassword] = useState<any>("");
@@ -27,7 +24,7 @@ function Login() {
   const handleClick = () => setShow(!show);
   const toast = useToast();
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     if (!email || !password) {
       toast({
         title: "Please Fill all the Feilds",
@@ -39,19 +36,53 @@ function Login() {
 
       return;
     }
-    login({ email, password }).then((res: any) => {
-      try {
-        if (res.status === 200) {
-          console.log("Login successfully");
-          <Redirect to="/chats" />;
-        } else {
-          console.log("error");
-        }
-      } catch (err) {
-        return err;
-      }
-    });
+    // login({ email, password }).then((res: any) => {
+    //   try {
+    //     if (res.status === 200) {
+    //       console.log("Login successfully");
+    //       navigate("/chats");
+    //     } else {
+    //       console.log("error");
+    //     }
+    //   } catch (err) {
+    //     return err;
+    //   }
+    // });
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+
+      const { data } = await axios.post(
+        "/api/login",
+        { email, password },
+        config
+      );
+
+      // console.log(JSON.stringify(data));
+      toast({
+        title: "Login Successful",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      navigate("/chats");
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
   };
+
   return (
     <VStack spacing="5px">
       <FormControl id="email" isRequired>
@@ -96,6 +127,6 @@ function Login() {
       </Button>
     </VStack>
   );
-}
+};
 
 export default Login;
